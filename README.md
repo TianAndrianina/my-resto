@@ -31,8 +31,8 @@ Pour voir la liste des restaurants, menus et cartes pour l'ajout, la modificatio
 ![](https://image.noelshack.com/fichiers/2019/16/6/1555735271-8.png)
 
 ## Bibliographie
-https://medium.com/@hasangi/writing-deleting-and-updating-data-in-firebase-realtime-database-with-javascript-f26113ec8c93
-https://material-ui.com
+- https://medium.com/@hasangi/writing-deleting-and-updating-data-in-firebase-realtime-database-with-javascript-f26113ec8c93
+- https://material-ui.com
 
 
 
