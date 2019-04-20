@@ -214,7 +214,7 @@ class PlatSearch extends React.Component {
                             <Slider
                                 id="valueMin_"
                                 classes={{ container: classes.slider }}
-                                value={this.props.prixMin}
+                                value={parseFloat(this.props.prixMin)}
                                 aria-labelledby="valueMin"
                                 style={{height : "auto"}}
                                 onChange={this.handleChangeMin}
@@ -226,7 +226,7 @@ class PlatSearch extends React.Component {
                             <Slider
                                 id="valueMax_"
                                 classes={{ container: classes.slider }}
-                                value={this.props.prixMax}
+                                value={parseFloat(this.props.prixMax)}
                                 style={{height : "auto"}}
                                 aria-labelledby="valueMax"
                                 onChange={this.handleChangeMax}

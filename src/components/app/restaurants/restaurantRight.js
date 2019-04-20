@@ -29,6 +29,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { loadCSS } from 'fg-loadcss/src/loadCSS';
 import Icon from '@material-ui/core/Icon';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Localisation from './localisation';
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -195,6 +196,7 @@ class RestaurantRight extends React.Component {
             open: false,
             checked: [],
             typeDeCuisineChecked: [],
+            openLoc : false,
         };
     }
 
@@ -261,6 +263,17 @@ class RestaurantRight extends React.Component {
         e.preventDefault();
         this.props.currentRestaurantClicked(this.props.resClicked);
         this.props.handleClickToMenu(e);
+    }
+
+    handleClickLocationRestaurant(e){
+        this.setState({
+            openLoc : true
+        })
+    }
+    handleCloseModalLocalisation(){
+        this.setState({
+            openLoc : false
+        })
     }
 
     handleClickModal(e, show) {
@@ -413,7 +426,8 @@ class RestaurantRight extends React.Component {
                             </div><br />
 
                             <Button variant="contained" color="primary" fullWidth className="button-primary custom-btn" onClick={(e) => {this.handleClickRestaurant(e)}}>Voir la carte pour les plats</Button><br/><br/>
-                            <Button variant="contained" color="primary" fullWidth className="button-primary custom-btn" onClick={(e) => {this.handleClickMenuRestaurant(e)}}>Voir les menus disponibles</Button>
+                            <Button variant="contained" color="primary" fullWidth className="button-primary custom-btn" onClick={(e) => {this.handleClickMenuRestaurant(e)}}>Voir les menus disponibles</Button><br/><br/>
+                            <Button variant="contained" color="primary" fullWidth className="button-primary custom-btn" onClick={(e) => {this.handleClickLocationRestaurant(e)}}>Voir la localisation du restaurant</Button>
                         </div>
                     }
                 </div>
@@ -467,6 +481,14 @@ class RestaurantRight extends React.Component {
                             <Button onClick={(e) => this.handleClickModal(e, false)} color="primary">Valider</Button>
                         </DialogActions>
                     </Dialog>
+                }
+                {
+                    this.props.resClicked !== undefined && this.props.resClicked !== null &&
+                    <Localisation 
+                    open={this.state.openLoc}
+                    restaurant={this.props.resClicked}
+                    handleCloseModalLocalisation={this.handleCloseModalLocalisation.bind(this)}
+                    />
                 }
             </div>
         );

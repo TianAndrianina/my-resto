@@ -395,3 +395,8 @@ table td, input {
     font-family: custom_font !important;
     font-weight: bold;
 }
+
+.leaflet-container {
+    height: 400px;
+    width: 100%;
+}
