@@ -1,8 +1,5 @@
 My Resto App : Application developper avec React JS, Material UI et Firebase
 
-## Lien de l'application
-
-L'application est hebergee sur Heroku vers ce lien [https://my-resto.herokuapp.com]https://my-resto.herokuapp.com
 
 My Resto App : Application developper avec React JS, Material UI et Firebase
 
