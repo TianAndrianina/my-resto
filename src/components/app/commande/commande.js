@@ -10,9 +10,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import ClearIcon from '@material-ui/icons/Clear';
-import base, { auth, provider , firebaseapp } from "../../../base/base";
+import base, { auth, provider, firebaseapp } from "../../../base/base";
 import { BrowserRouter as Router, Route, Link, Prompt } from "react-router-dom";
-import {Cookies}    from 'react-cookie';
+import { Cookies } from 'react-cookie';
 import commandevide from "../../../assets/images/commande-vide.png";
 import CommandeLoginModal from './cmdLoginModal';
 import PropTypes from 'prop-types';
@@ -51,8 +51,8 @@ const cookies = new Cookies();
 class Commande extends React.Component {
     constructor(props) {
         super(props);
-        const cmdCookie = cookies.get('cmdOnboarded');  
-        this.state={
+        const cmdCookie = cookies.get('cmdOnboarded');
+        this.state = {
             commande: this.props.currentCommande,
             somme: this.props.somme,
             prixTotal: '',
@@ -61,165 +61,172 @@ class Commande extends React.Component {
             open: false
         }
     }
-    handleQteChange(event,keycommande,platKey,prixplat,prixTotal,total1) {
+    handleQteChange(event, keycommande, platKey, prixplat, prixTotal, total1) {
         const storeRef = firebaseapp.database().ref('commande/');
-        if(event.target.value == 0){
-            if(this.props.currentCommande[keycommande].plats){
+        if (event.target.value == 0) {
+            if (this.props.currentCommande[keycommande].plats) {
                 storeRef.child(keycommande).child(keycommande).child('plats').child(platKey).remove();
             }
-            storeRef.child(keycommande).child(keycommande).update({total: total1-prixTotal}).then().catch();
+            storeRef.child(keycommande).child(keycommande).update({ total: total1 - prixTotal }).then().catch();
         }
-        else{
-            prixplat = prixplat*1;
-            const prixTot = (event.target.value*1)*prixplat;
-            if(prixTot>prixTotal){
-                total1 = total1 + ((event.target.value*1-(prixTotal/prixplat))*prixplat);
+        else {
+            prixplat = prixplat * 1;
+            const prixTot = (event.target.value * 1) * prixplat;
+            if (prixTot > prixTotal) {
+                total1 = total1 + ((event.target.value * 1 - (prixTotal / prixplat)) * prixplat);
             }
-            else if(prixTot<prixTotal){
-                total1 = total1 - (((prixTotal/prixplat)-event.target.value*1)*prixplat);
+            else if (prixTot < prixTotal) {
+                total1 = total1 - (((prixTotal / prixplat) - event.target.value * 1) * prixplat);
             }
-            storeRef.child(keycommande).child(keycommande).child('plats').child(platKey).update({qteplat: event.target.value*1, prixTotal: prixTot}).then().catch();        
-            storeRef.child(keycommande).child(keycommande).update({total: total1}).then().catch();
+            storeRef.child(keycommande).child(keycommande).child('plats').child(platKey).update({ qteplat: event.target.value * 1, prixTotal: prixTot }).then().catch();
+            storeRef.child(keycommande).child(keycommande).update({ total: total1 }).then().catch();
         }
     }
-    handleRemove(event,keycommande,platKey,prixTotal, total1) {
+    handleRemove(event, keycommande, platKey, prixTotal, total1) {
         event.preventDefault();
         const storeRef = firebaseapp.database().ref('commande/');
-        if(this.props.currentCommande[keycommande].plats){
+        if (this.props.currentCommande[keycommande].plats) {
             storeRef.child(keycommande).child(keycommande).child('plats').child(platKey).remove();
         }
-        storeRef.child(keycommande).child(keycommande).update({total: total1-prixTotal}).then().catch();
+        storeRef.child(keycommande).child(keycommande).update({ total: total1 - prixTotal }).then().catch();
     }
-    emptyCommande(){
-         
-        if(this.state.cmdCookie !== null){
-            const storeRef = firebaseapp.database().ref('commande/'+this.state.cmdCookie);
+    emptyCommande() {
+
+        if (this.state.cmdCookie !== null) {
+            const storeRef = firebaseapp.database().ref('commande/' + this.state.cmdCookie);
             storeRef.remove();
             cookies.remove('cmdOnboarded');
         }
     }
-    handleCheckOutCmd(e){
+    handleCheckOutCmd(e) {
         e.preventDefault();
-       if(sessionStorage.getItem('user')===null){
-        this.setState({ isBlocking: false},function(){
-            this.props.history.push('/se-connecter');
-        });
-       }
-       else{
-            this.setCommandeEncours(cookies.get('cmdOnboarded'),sessionStorage.getItem('user'));
-            this.props.history.push('/profile');
-            cookies.remove('cmdOnboarded');
-       }
-        
+        if (sessionStorage.getItem('user') === null) {
+            this.setState({ isBlocking: false }, function () {
+                this.props.history.push('/se-connecter');
+            });
+        }
+        else {
+            debugger;
+            var utilisateur = JSON.parse(sessionStorage.getItem('user'));
+            var success = this.setCommandeEncours(cookies.get('cmdOnboarded'), utilisateur);
+                this.props.history.push('/profile');
+                cookies.remove('cmdOnboarded');
+            
+        }
+
     }
-    setCommandeEncours(idcommande,utilisateur){
-        const storeRef = firebaseapp.database().ref('commande/'+idcommande);
-        storeRef.child(idcommande).update({utilisateur: utilisateur}).then(
-        ).catch();
+    setCommandeEncours(idcommande, utilisateur) {
+        var success = false;
+        const storeRef = firebaseapp.database().ref('commande/' + idcommande);
+        storeRef.child(idcommande).update({ utilisateur: utilisateur }).then(() => {
+            success = true;
+        }).catch();
+        return success;
     }
-    componentWillUnmount(){
-       // this.emptyCommande();
+    componentWillUnmount() {
+        // this.emptyCommande();
     }
-    render(){
+    render() {
         var style = {
-            float : "right"
+            float: "right"
         };
         const { classes } = this.props;
-        return( 
-        <div>
-        <React.Fragment>
-            <Prompt
-                when={this.state.isBlocking}
-                message={
-                    `Etes-vous sur de quitter? Si vous quittez maintenant, votre commande chez ${this.props.currentRestaurant.nom} sera perdu.`
-                }
-                />
-        </React.Fragment>
-        {
-            this.state.cmdCookie !== null && this.props.currentCommande[this.state.cmdCookie].plats &&
+        return (
             <div>
-            <Table className='tableCmd'>
-                        <TableHead>
-                            <TableRow className="head-table">
-                                <CustomTableCell>Plat</CustomTableCell>
-                                <CustomTableCell>Quantité</CustomTableCell>
-                                <CustomTableCell>Prix</CustomTableCell>
-                                <CustomTableCell>Total</CustomTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {
-                            Object.keys(this.props.currentCommande).map((key, i1) =>{ 
-                                const commande = this.props.currentCommande[key];
-                                if(commande.plats){
-                                    return (                
-                                        Object.keys(commande.plats).map((keyplat, i2) =>{ 
-                                            const plat = commande.plats[keyplat];
-                                            return (      
-                                                <TableRow key={i2}>
-                                                    <CustomTableCell>
-                                                        {/* <Typography id="simple-modal-description">{p.plat.nom}</Typography> */}
-                                                        {plat.plat.nom}
+                <React.Fragment>
+                    <Prompt
+                        when={this.state.isBlocking}
+                        message={
+                            `Etes-vous sur de quitter? Si vous quittez maintenant, votre commande chez ${this.props.currentRestaurant.nom} sera perdu.`
+                        }
+                    />
+                </React.Fragment>
+                {
+                    this.state.cmdCookie !== null && this.props.currentCommande[this.state.cmdCookie].plats &&
+                    <div>
+                        <Table className='tableCmd'>
+                            <TableHead>
+                                <TableRow className="head-table">
+                                    <CustomTableCell>Plat</CustomTableCell>
+                                    <CustomTableCell>Quantité</CustomTableCell>
+                                    <CustomTableCell>Prix</CustomTableCell>
+                                    <CustomTableCell>Total</CustomTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    Object.keys(this.props.currentCommande).map((key, i1) => {
+                                        const commande = this.props.currentCommande[key];
+                                        if (commande.plats) {
+                                            return (
+                                                Object.keys(commande.plats).map((keyplat, i2) => {
+                                                    const plat = commande.plats[keyplat];
+                                                    return (
+                                                        <TableRow key={i2}>
+                                                            <CustomTableCell>
+                                                                {/* <Typography id="simple-modal-description">{p.plat.nom}</Typography> */}
+                                                                {plat.plat.nom}
+                                                            </CustomTableCell>
+                                                            <CustomTableCell>
+                                                                <TextField
+                                                                    onChange={(e) => { this.handleQteChange(e, key, keyplat, plat.plat.prix, plat.prixTotal, commande.total) }}
+                                                                    value={plat.qteplat}
+                                                                    type="number"
+                                                                    inputProps={{ min: "0", max: "50", step: "1" }}
+                                                                />
+                                                            </CustomTableCell>
+                                                            <CustomTableCell>{plat.plat.prix} RS</CustomTableCell>
+                                                            <CustomTableCell>
+                                                                <Typography className="js-price">
+                                                                    {plat.prixTotal}
+                                                                </Typography>
+                                                                RS
                                                     </CustomTableCell>
-                                                    <CustomTableCell>
-                                                        <TextField
-                                                            onChange={(e) => { this.handleQteChange(e,key,keyplat,plat.plat.prix,plat.prixTotal,commande.total) }}
-                                                            value={plat.qteplat}
-                                                            type="number"
-                                                            inputProps={{ min: "0", max: "50", step: "1" }} 
-                                                        />
-                                                    </CustomTableCell>
-                                                    <CustomTableCell>{plat.plat.prix} RS</CustomTableCell>
-                                                    <CustomTableCell>
-                                                        <Typography className="js-price">
-                                                            {plat.prixTotal} 
-                                                        </Typography>
-                                                        RS
-                                                    </CustomTableCell>
-                                                    <CustomTableCell>
-                                                        <ClearIcon style={iconstyle} onClick={(e) => { this.handleRemove(e,key, keyplat,plat.prixTotal,commande.total) }} />
-                                                    </CustomTableCell>
-                                                </TableRow>
-                                            )})
-                                    )
+                                                            <CustomTableCell>
+                                                                <ClearIcon style={iconstyle} onClick={(e) => { this.handleRemove(e, key, keyplat, plat.prixTotal, commande.total) }} />
+                                                            </CustomTableCell>
+                                                        </TableRow>
+                                                    )
+                                                })
+                                            )
+                                        }
+                                    })
                                 }
-                                })
-                        }
-                        {
-                            Object.keys(this.props.currentCommande).map((key, i1) =>{ 
-                                
-                                
-                                    return(
-                                        <TableRow>
-                                            <TableCell rowSpan={3} />
-                                            <TableCell colSpan={2}><b>Total</b></TableCell>
-                                            <TableCell align="right">{this.props.currentCommande[key].total} RS</TableCell>
-                                        </TableRow>
-                                    )
-                                
-                            })
-                        }
-                        </TableBody>
-                    </Table>
-                   <br/>
-                    <Button color="secondary" style={style}  className={classes.button} onClick={this.handleCheckOutCmd.bind(this)}>Valider ma commande</Button>
-                </div>
-        }
-        {
-            this.state.cmdCookie !== null && !this.props.currentCommande[this.state.cmdCookie].plats &&
-            <div>
-                <img src={commandevide} alt="commandevide"  />
-                <br/>
-                <p>Pensez a passer votre commande</p>
-            </div>
-        }
-            
-           
-            {/* <CommandeLoginModal
+                                {
+                                    Object.keys(this.props.currentCommande).map((key, i1) => {
+
+
+                                        return (
+                                            <TableRow>
+                                                <TableCell rowSpan={3} />
+                                                <TableCell colSpan={2}><b>Total</b></TableCell>
+                                                <TableCell align="right">{this.props.currentCommande[key].total} RS</TableCell>
+                                            </TableRow>
+                                        )
+
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                        <br />
+                        <Button color="secondary" style={style} className={classes.button} onClick={this.handleCheckOutCmd.bind(this)}>Valider ma commande</Button>
+                    </div>
+                }
+                {
+                    this.state.cmdCookie !== null && !this.props.currentCommande[this.state.cmdCookie].plats &&
+                    <div>
+                        <img src={commandevide} alt="commandevide" />
+                        <br />
+                        <p>Pensez a passer votre commande</p>
+                    </div>
+                }
+
+
+                {/* <CommandeLoginModal
                   {...this.props}
                 open={this.state.open} 
             />  */}
-        </div>
+            </div>
         );
     }
 }
