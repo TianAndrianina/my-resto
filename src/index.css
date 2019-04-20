@@ -7,8 +7,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+@media screen and (min-width: 768px) {
+  .navbar-expand-sm{
+    justify-content: space-between;
+  }
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.customModal {
+  position: absolute;
+  background-color: #FFE;
+  padding: 20px;
+  width: 50%;
+}
+
+.tableCmd td {
+    padding: 10px!important;
+  }
+
+  .tableCmd th {
+    padding: 10px!important;
+  }
