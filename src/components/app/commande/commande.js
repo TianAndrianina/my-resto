@@ -106,7 +106,6 @@ class Commande extends React.Component {
             });
         }
         else {
-            debugger;
             var utilisateur = JSON.parse(sessionStorage.getItem('user'));
             var success = this.setCommandeEncours(cookies.get('cmdOnboarded'), utilisateur);
                 this.props.history.push('/profile');

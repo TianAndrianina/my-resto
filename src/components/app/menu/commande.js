@@ -115,7 +115,7 @@ class Commande extends React.Component {
     }
     setCommandeEncours(idcommande, utilisateur) {
         const storeRef = firebaseapp.database().ref('commande/' + idcommande);
-        storeRef.child(idcommande).update({ utilisateur: JSON.parse(utilisateur) }).then(
+        storeRef.child(idcommande).update({ utilisateur: utilisateur }).then(
         ).catch();
     }
     componentWillUnmount() {
